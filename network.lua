@@ -10,7 +10,9 @@ config = serial.unserialize(text)
 modem.open(65535)
 modem.setWakeMessage("wake" .. modem.address, true)
 
-function send(hostname, port , message, ...)
+local network ={} 
+
+function network.send(hostname, port , message, ...)
     if type(hostname) == "string" then
             modem.send(config.dns.addr, 53, "get" ,hostname)
             _, _, _, _, _, addr = event.pull("modem_message")
@@ -21,7 +23,7 @@ function send(hostname, port , message, ...)
     end
 end
 
-function wake(hostname)
+function network.wake(hostname)
     if type(hostname) == "string" then
             modem.send(config.dns.addr, 53, "get" ,hostname)
             _, _, _, _, _, addr = event.pull("modem_message")
@@ -32,43 +34,43 @@ function wake(hostname)
     end
 end
 
-function open(...)
+function network.open(...)
     return modem.open(...)
 end
 
 
-function close(...)
+function network.close(...)
     return modem.close(...)
 end
 
-function isOpen(...)
+function network.isOpen(...)
     return modem.isOpen(...)
 end
 
-function isWireless()
+function network.isWireless()
     return modem.iswireless()
 end
 
-function isWired()
+function network.isWired()
     return modem.isWired()
 end
 
-function slot()
+function network.slot()
     return modem.slot()
 end
 
-function address()
+function network.address()
     return modem.address()
 end
-function addr()
+function network.addr()
     return modem.address()
 end
-function broadcast(...)
+function network.broadcast(...)
     return modem.broadcast(...)
 end
 
 
-function register(name)
+function network.register(name)
     modem.send(config.dns.addr,53,"register", name, modem.address)
     _, _, _, _, _, status = event.pull("modem_message")
     if status then
@@ -77,3 +79,5 @@ function register(name)
         print("didn't register")
     end
 end
+
+return network
