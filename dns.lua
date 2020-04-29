@@ -9,6 +9,7 @@ function register(name, addr)
     domain = string.gsub(name,'%.','')
     if liste[domain] == nil or liste[domain] ~= addr then
         liste[domain] = addr
+        liste[addr] = addr
     end
     local file = io.open("/etc/dnsTable", "w")
     file:write(serial.serialize(liste))

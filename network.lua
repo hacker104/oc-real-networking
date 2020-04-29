@@ -1,35 +1,73 @@
---[[
-53 - dns
-67 - dhcp
-68 - dhcp
-647 - dhcp fallback
-]]
-local serial = require("serialization")
-local file = io.open("/etc/network.cfg")
-local text = file:read("*all")
-file:close()
-config = serial.unserialize(text)
-
 local component = require("component")
 local event = require("event")
 local modem = component.modem 
-modem.open(65535)
+local serial = require("serialization")
+local file = io.open("/etc/network.cfg")
 
-function send(hostname, port , message)
-    if type(hostname) == "number" then
-        if hostname == range(192168000000, 192168255255) then
-            modem.send(config.ipdns.addresspriv, port)
-        elseif hostname == nil then
-            modem.send(config.ipdns.address, port)
-        end
-    elseif type(hostname) == "string" then
+local text = file:read("*all")
+file:close()
+config = serial.unserialize(text)
+modem.open(65535)
+modem.setWakeMessage("wake" + modem.address, true)
+
+function send(hostname, port , message, ...)
+    if type(hostname) == "string" then
             modem.send(config.dns.addr, 53, "get" ,hostname)
             _, _, _, _, _, addr = event.pull("modem_message")
-            modem.send(addr,port,message)
+            print(modem.send(addr,port,message, ...))
+            return true
     else
-        print("unsuppoted hostname type")
+        return false
     end
 end
+
+function wake(hostname)
+    if type(hostname) == "string" then
+            modem.send(config.dns.addr, 53, "get" ,hostname)
+            _, _, _, _, _, addr = event.pull("modem_message")
+            print(modem.send(addr,9,"wake"+addr))
+            return true
+    else
+        return false
+    end
+end
+
+function open(...)
+    return modem.open(...)
+end
+
+
+function close(...)
+    return modem.close(...)
+end
+
+function isOpen(...)
+    return modem.isOpen(...)
+end
+
+function isWireless()
+    return modem.iswireless()
+end
+
+function isWired()
+    return modem.isWired()
+end
+
+function slot()
+    return modem.slot()
+end
+
+function address()
+    return modem.address()
+end
+function addr()
+    return modem.address()
+end
+function broadcast(...)
+    return modem.broadcast(...)
+end
+
+
 function register(name)
     modem.send(config.dns.addr,53,"register", name, modem.address)
     _, _, _, _, _, status = event.pull("modem_message")
@@ -39,4 +77,3 @@ function register(name)
         print("didn't register")
     end
 end
-register("google.nl")
