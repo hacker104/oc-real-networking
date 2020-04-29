@@ -25,7 +25,7 @@ function wake(hostname)
     if type(hostname) == "string" then
             modem.send(config.dns.addr, 53, "get" ,hostname)
             _, _, _, _, _, addr = event.pull("modem_message")
-            print(modem.send(addr,9,"wake"+addr))
+            print(modem.send(addr,9,"wake"..addr))
             return true
     else
         return false
