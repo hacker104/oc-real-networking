@@ -8,7 +8,7 @@ local text = file:read("*all")
 file:close()
 config = serial.unserialize(text)
 modem.open(65535)
-modem.setWakeMessage("wake" + modem.address, true)
+modem.setWakeMessage("wake" .. modem.address, true)
 
 function send(hostname, port , message, ...)
     if type(hostname) == "string" then
