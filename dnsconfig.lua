@@ -1,3 +1,0 @@
-config{
-    "hostname":"addres"
-}
