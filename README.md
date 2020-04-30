@@ -3,4 +3,4 @@ this is a attempt at making networking more real in the [opencomputers mod](http
 ___
 look at releases for the stable files
 ___
-note that i don't put my full tim in this project is if a fun project for me
+note that i don't put my full time in this project is if a fun project for me
